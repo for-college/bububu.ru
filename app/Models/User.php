@@ -18,6 +18,7 @@ class User extends Authenticatable
     'surname',
     'name',
     'patronymic',
+    'password',
     'sex',
     'phone',
     'birthday',

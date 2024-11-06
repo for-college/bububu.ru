@@ -5,7 +5,6 @@ namespace App\Http\Requests\Api;
 
 class RegisterRequest extends ApiRequest
 {
-
   public function rules(): array
   {
     return [
