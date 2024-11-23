@@ -1,7 +1,5 @@
 @extends('layouts.layout')
-
-@section('title', 'Главная страница')
-
+@section('title', 'Bububu')
 @section('content')
-  asd
+  Главная
 @endsection

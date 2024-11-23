@@ -37,14 +37,6 @@ class User extends Authenticatable
     'api_token',
   ];
 
-  protected function casts(): array
-  {
-    return [
-      'password' => 'hashed',
-      'sex' => 'boolean',
-    ];
-  }
-
   public function role(): BelongsTo
   {
     return $this->belongsTo(Role::class);
@@ -73,5 +65,13 @@ class User extends Authenticatable
   public function productsInCart(): BelongsToMany
   {
     return $this->belongsToMany(Product::class, CartItem::class);
+  }
+
+  protected function casts(): array
+  {
+    return [
+      'password' => 'hashed',
+      'sex' => 'boolean',
+    ];
   }
 }

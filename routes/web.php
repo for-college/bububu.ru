@@ -1,16 +1,19 @@
 <?php
 
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\CategoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'home')->name('home');
+Route::view('', 'home')->name('home');
 
-Route::controller(AuthController::class)->group(function () {
-  Route::view('login', 'auth.login');
-  Route::post('login', 'login')->name('login');
+Route
+  ::controller(AuthController::class)
+  ->group(function ($auth) {
+    $auth->view('signup', 'auth.signup')->name('signupForm');
+    $auth->post('signup', 'signup')->name('signup');
+    $auth->view('login', 'auth.login')->name('loginForm');
+    $auth->post('login', 'login')->name('login');
+    $auth->get('logout', 'logout')->middleware('auth:web')->name('logout');
+  });
 
-  Route::view('register', 'auth.register');
-  Route::post('register', 'register')->name('register');
-
-  Route::get('logout', 'logout')->middleware('auth:web');
-});
+Route::resource('categories', CategoryController::class);

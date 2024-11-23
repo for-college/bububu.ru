@@ -8,20 +8,13 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ApiRequest extends FormRequest
 {
-  /**
-   * @throws ApiException
-   */
   public function failedAuthorization()
   {
-    throw new ApiException('Forbidden', 403);
-
+    throw new ApiException(403, 'Forbidden');
   }
 
-  /**
-   * @throws ApiException
-   */
   public function failedValidation(Validator $validator)
   {
-    throw new ApiException('Validation failed', 422, $validator->errors());
+    throw new ApiException(422, 'Unprocessable Content', $validator->errors());
   }
 }

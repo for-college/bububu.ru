@@ -4,61 +4,53 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ApiRequest;
-use App\Http\Requests\Api\RegisterRequest;
+use App\Http\Requests\Api\SignupRequest;
 use App\Models\Role;
 use App\Models\User;
-use Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-  public function register(RegisterRequest $request)
+  public function signup(SignupRequest $request)
   {
-    $role_user = Role::where('code', 'user')->first();
-    $path = null;
-
-    if ($request->hasFile('avatar')) {
-      $path = $request->file('avatar')->store('avatars', 'public');
-    }
+    if ($request->hasFile('avatar'))
+      $path = $request
+        ->file('avatar')
+        ->store('avatars', 'public');
 
     $user = User::create([
-      ...$request->validated(), 'avatar' => $path, 'role_id' => $role_user->id
+      ...$request->validated(),
+      'role_id' => Role::firstOrCreate(['code' => 'user'])->id,
+      'avatar' => $path ?? null,
+      'api_token' => Str::random(60),
     ]);
 
-    $user->api_token = Hash::make(Str::random(60));
-    $user->save();
-
-    return response()->json([
-      'user' => $user,
+    return response([
       'token' => $user->api_token,
+      'user' => $user,
     ], 201);
   }
 
-  public function login(ApiRequest $request)
+  public function login(Request $request)
   {
-    if (!Auth::attempt($request->only('email', 'password'))) {
-      throw new ApiException('Failed auth', 401);
-    }
+    if (!Auth::attempt($request->only('email', 'password')))
+      throw new ApiException(401, 'Unauthorized');
 
     $user = Auth::user();
-    $user->api_token = Hash::make(Str::random(60));
-    $user->save();
+    if (!$user->api_token)
+      $user->update(['api_token' => Str::random(60)]);
 
-    return response()->json([
-      'user' => $user,
+    return response([
       'token' => $user->api_token,
+      'user' => $user,
     ]);
   }
 
-
-  public function logout(ApiRequest $request)
+  public function logout()
   {
-    $user = Auth::user();
-    $user->api_token = null;
-    $user->save();
-
-    return response()->json();
+    Auth::user()->update(['api_token' => null]);
+    return response(null, 204);
   }
 }

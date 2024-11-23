@@ -122,10 +122,11 @@
 
       <div>
         <label for="register-password2">
-         Подтвердите пароль
+          Подтвердите пароль
         </label>
 
-        <input id="register-password2" name="password_confirmation" required type="password" placeholder="Введите password">
+        <input id="register-password2" name="password_confirmation" required type="password"
+               placeholder="Введите password">
       </div>
 
       <div>
